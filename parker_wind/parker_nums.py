@@ -22,14 +22,20 @@ def RK4(dY, initX, initY, endX, h):
 		YValues[i + 1] = YValues[i] + k1 / 6 + k2 / 3 + k3 / 3 + k4 / 6
 	return np.array([XValues, YValues])
 
-delta = 0.0001
-dudr = "(2 * y * (x - 1)) / (x * x * (y * y - 1))"
-output1 = RK4(dudr, 1.0 + delta, 1.0 - delta, 2.5, 0.1)
-output2 = RK4(dudr, 1.0 - delta, 1.0 + delta, 0.5, -0.1)
 
+delta = 0.0001	# small deviation from critical point
+
+#y = u/c
+#x = r/r_c
+
+dudr = "(2 * y * (x - 1)) / (x * x * (y * y - 1))" # expression for du/dr
+output1 = RK4(dudr, 1.0 + delta, 1.0 - delta, 2.5, 0.1) # integration forward
+output2 = RK4(dudr, 1.0 - delta, 1.0 + delta, 0.5, -0.1) # integration backward
 totalOutput = np.concatenate((output1, output2), axis = 1)
 totalOutput = totalOutput[:, totalOutput[0,:].argsort()]
-print totalOutput[0,:].argsort()
-print totalOutput
+
 plt.plot(totalOutput[0,:], totalOutput[1,:])
+plt.xlabel('r/r_c')
+plt.ylabel('u/c')
+plt.title('Stable manifold of Parker wind model')
 plt.show()
